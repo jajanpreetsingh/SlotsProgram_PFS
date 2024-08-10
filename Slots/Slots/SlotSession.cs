@@ -60,9 +60,7 @@ namespace Slots
 
         public void DisplaySlotResults()
         {
-            Console.Write("Stop Positions : ");
-
-            StringBuilder stopPositions = new StringBuilder();
+            StringBuilder stopPositions = new StringBuilder("Stop Positions : \n");
 
             if (_slotResults == null)
             {
@@ -76,9 +74,7 @@ namespace Slots
 
             Console.WriteLine(stopPositions.ToString());
 
-            Console.WriteLine("Screen : ");
-
-            StringBuilder symbols = new StringBuilder();
+            StringBuilder symbols = new StringBuilder("Screen : \n");
 
             for (int rowIndex = 0; rowIndex < _slotRows; rowIndex++)
             {
