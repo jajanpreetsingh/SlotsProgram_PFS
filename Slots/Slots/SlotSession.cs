@@ -108,27 +108,40 @@ namespace Slots
             Console.WriteLine("Total Wins : " + CalculateWins(_screenOutput));
         }
 
-        public int CalculateWins(List<List<Symbols>> _screenOutput)
+        private int CalculateWins(List<List<Symbols>> _screenOutput)
         {
             int result = 0;
 
+            Dictionary<Symbols, int> scoreBySymbol = null;
+
             foreach (List<Symbols> rowOutput in _screenOutput)
             {
-                int maxRowScore = 0;
+                scoreBySymbol = ResetScoreDictionary();
 
                 _payoutTable.Records.ForEach(record =>
                 {
                     if (SequenceExists(record, rowOutput)
-                    && record.Score > maxRowScore)
+                    && record.Score > scoreBySymbol[record.Symbol])
                     {
-                        maxRowScore = record.Score;
+                        scoreBySymbol[record.Symbol] = record.Score;
                     }
                 });
 
-                result += maxRowScore;
+                result += scoreBySymbol.Sum(x => x.Value);
             }
 
             return result;
+        }
+
+        private Dictionary<Symbols, int> ResetScoreDictionary()
+        {
+            Dictionary<Symbols, int> scoreBySymbol = new();
+
+            List<Symbols> symbols = Enum.GetValues<Symbols>().ToList();
+
+            scoreBySymbol = symbols.ToDictionary(s => s, val => 0);
+
+            return scoreBySymbol;
         }
 
         private bool SequenceExists(PayoutTableRecord record, List<Symbols> rowOutput)
