@@ -136,7 +136,7 @@ namespace Slots
                 }
                 else
                 {
-                    break;
+                    counter = 0;
                 }
             }
 
