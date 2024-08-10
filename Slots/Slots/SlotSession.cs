@@ -14,6 +14,7 @@ namespace Slots
         private List<List<Symbols>> _screenOutput;
         private int _slotRows;
         private int _maxRows = 0;
+        private int _maxColumns = 0;
 
         public SlotSession(int slotRows)
         {
@@ -24,6 +25,7 @@ namespace Slots
             _slotResults = new List<List<int>>();
 
             _maxRows = _reelSet.Bands.Min(band => band.Count);
+            _maxColumns = _reelSet.Bands.Count;
         }
 
         public void StartReels()
@@ -126,21 +128,38 @@ namespace Slots
 
         private bool SequenceExists(PayoutTableRecord record, List<Symbols> rowOutput)
         {
+            int largestOccurence = 0;
             int counter = 0;
 
-            for (int i = 0; i < rowOutput.Count; i++)
+            if (record.RequiredMatchCount > _maxColumns
+                || record.RequiredMatchCount > rowOutput.Count)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < rowOutput.Count ; i++)
             {
                 if (rowOutput[i] == record.Symbol)
                 {
                     ++counter;
                 }
-                else if(counter < 3)
+                else //sequence break
                 {
+                    if (counter > 2)
+                    {
+                        largestOccurence = Math.Max(largestOccurence, counter);
+
+                        if (largestOccurence > record.RequiredMatchCount)
+                        {
+                            return false;
+                        }
+                    }
+
                     counter = 0;
                 }
             }
 
-            return counter == record.RequiredMatchCount;
+            return largestOccurence == record.RequiredMatchCount;
         }
 
         private void DetermineScreenOutput()
