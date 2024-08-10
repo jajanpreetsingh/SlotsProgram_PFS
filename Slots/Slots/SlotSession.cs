@@ -10,20 +10,28 @@ namespace Slots
     {
         private PayoutTable _payoutTable;
         private ReelSet _reelSet;
-        private List<List<int>>? _slotResults;
-        private List<List<Symbols>>? _screenOutput;
+        private List<List<int>> _slotResults;
+        private List<List<Symbols>> _screenOutput;
         private int _slotRows;
+        private int _maxRows = 0;
 
         public SlotSession(int slotRows)
         {
             _payoutTable = new();
             _reelSet = new ReelSet();
             _slotRows = slotRows;
+            _screenOutput = new();
+            _slotResults = new List<List<int>>();
+
+            _maxRows = _reelSet.Bands.Min(band => band.Count);
         }
 
         public void StartReels()
         {
-            _slotResults = new List<List<int>>();
+            if (BadRowInput())
+            {
+                return;
+            }
 
             for (int bandIndex = 0; bandIndex < _reelSet.Bands.Count; bandIndex++)
             {
@@ -60,6 +68,11 @@ namespace Slots
 
         public void DisplaySlotResults()
         {
+            if (_screenOutput == null || _screenOutput.Count < 1)
+            {
+                return;
+            }
+
             StringBuilder stopPositions = new StringBuilder("Stop Positions : \n");
 
             if (_slotResults == null)
@@ -168,6 +181,19 @@ namespace Slots
             }
 
             return resultIndex;
+        }
+
+        private bool BadRowInput()
+        {
+            if (_slotRows < 1 || _slotRows > _maxRows)
+            {
+                Console.WriteLine("(Min,Max) rows supported by current reel set : ( 1, " + _maxRows + ")"
+                    + "\nQuitting session ... ");
+
+                return true;
+            }
+
+            return false;
         }
     }
 }
