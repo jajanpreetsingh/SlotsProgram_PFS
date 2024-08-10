@@ -127,16 +127,18 @@ namespace Slots
         private bool SequenceExists(PayoutTableRecord record, List<Symbols> rowOutput)
         {
             int counter = 0;
+            bool found = false;
 
             for (int i = 0; i < rowOutput.Count; i++)
             {
                 if (rowOutput[i] == record.Symbol)
                 {
+                    found = true;
                     ++counter;
                 }
-                else
+                else if(found && i > 1)
                 {
-                    counter = 0;
+                    break;
                 }
             }
 
