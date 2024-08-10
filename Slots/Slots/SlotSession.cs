@@ -136,9 +136,13 @@ namespace Slots
                     found = true;
                     ++counter;
                 }
-                else if(found && i > 1)
+                else if (found && i > 1)
                 {
                     break;
+                }
+                else
+                {
+                    counter = 0;
                 }
             }
 
