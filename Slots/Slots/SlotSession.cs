@@ -114,13 +114,18 @@ namespace Slots
 
             foreach (List<Symbols> rowOutput in _screenOutput)
             {
+                int maxRowScore = 0;
+
                 _payoutTable.Records.ForEach(record =>
                 {
-                    if (SequenceExists(record, rowOutput))
+                    if (SequenceExists(record, rowOutput)
+                    && record.Score > maxRowScore)
                     {
-                        result += record.Score;
+                        maxRowScore = record.Score;
                     }
                 });
+
+                result += maxRowScore;
             }
 
             return result;
@@ -151,7 +156,7 @@ namespace Slots
 
                         if (largestOccurence > record.RequiredMatchCount)
                         {
-                            return false;
+                            return true;
                         }
                     }
 
